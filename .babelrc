@@ -1,0 +1,34 @@
+{
+    "presets": [
+      "module:metro-react-native-babel-preset"
+    ],
+    "plugins": [
+      [
+        "module-resolver",
+        {
+          "alias": {
+            "Component": "./src/component",
+            "Asset/Image": "./src/asset/image",
+            "ArrayPolyfill": "./src/util/arrayPolyfill",
+            "ConsolePolyfill": "./src/util/consolePolyfill",
+            "DatePolyfill": "./src/util/datePolyfill",
+            "ObjectPolyfill": "./src/util/objectPolyfill",
+            "PromisePolyfill": "./src/util/promisePolyfill",
+            "StringPolyfill": "./src/util/stringPolyfill",
+            "Utilities": "./src/util/utilities",
+            "i18": "./src/service/i18",
+            "Server": "./src/service/server/server",
+            "Redux": "./src/redux",
+            "Key": "./src/service/key/key",
+            "Item": "./src/component/item",
+            "Page": "./src/component/page",
+            "Config": "./src/config/config",
+            "Controller": "./src/controller",
+            "Responsive": "./src/responsive",
+            "GlobalVal": "./src/globalVal",
+            "Theme": "./src/config/theme",
+          }
+        }
+      ]
+    ]
+  }
