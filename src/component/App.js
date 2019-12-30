@@ -32,22 +32,8 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		RNFetchBlob.config({
-            fileCache : true
-		  })
-		  
 		let { props } = this;
 		let {navigation} = props
-		setTimeout(()=> {
-			let { enableLock, } = this.props;
-
-			console.log(enableLock)
-			
-			this.setState({locked: enableLock});
-			//for measurement sound
-
-		}, 500)
-	
 
 		if (Platform.OS == 'android') {
 			BackHandler.addEventListener('hardwareBackPress', function() {
@@ -60,19 +46,7 @@ class App extends Component {
 				setTimeout(() => SplashScreen.hide(), 2000);
 	
 		}
-
 		AppState.addEventListener('change', this._handleAppStateChange);
-		
-		
-
-	}
-
-	componentWillReceiveProps (newProps) {
-
-	}
-
-	componentWillMount(){
-
 		
 	}
 
@@ -92,20 +66,9 @@ class App extends Component {
 		return (
 			<SafeAreaView style={{ flex: 1,}}>
 				<AppNavigator />
-
 			</SafeAreaView>
 		)
 	}
-
-	setLoading(isLoading) {
-
-		if (this.state.loading != isLoading) {
-			this.setState({
-				loading: isLoading
-			});
-		}
-	}
-
 }
 
 const mapStateToProps = (state, ownProps) => {

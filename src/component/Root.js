@@ -5,7 +5,7 @@ import key from 'Key';
 
 const initStore = require('Redux').init;
 const App = require('./App.js');
-import { Loading } from 'Page';
+//import { Loading } from 'Page';
 
 class Root extends Component {
 
@@ -28,9 +28,9 @@ class Root extends Component {
 	render() {
 		let {store,loading } = this.state;
 
-		if (loading) {
-			return <Loading />;
-		}
+		// if (loading) {
+		// 	return <Loading />;
+		// }
 
 		if (store)
 			return (

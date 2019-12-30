@@ -70,7 +70,7 @@ class AppNavigator extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-	  user: state.auth.user,
+	  //user: state.auth.user,
   }
 }
 

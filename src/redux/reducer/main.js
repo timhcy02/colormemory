@@ -7,10 +7,13 @@ const { Types } = require('../action/main');
 
 export const INITIAL_STATE = {
 	userRecord: [],
+	test:false
 }
 
 export const updateUserRecord = (state = INITIAL_STATE, action) => {
-	return { ...state, userRecord: action.data };
+	newUserRecord = state.userRecord.slice()
+	newUserRecord.push(action.data)
+	return { ...state, userRecord: newUserRecord, test: !state.test };
 }
 
 export const HANDLERS = {

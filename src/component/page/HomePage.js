@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View, StyleSheet, Animated, Text, Image, TouchableWithoutFeedback,FlatList } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Animated, Text, Image, TouchableWithoutFeedback,FlatList,TextInput } from 'react-native';
 import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-community/async-storage';
+import ShowRecord from './ShowRecord';
 const colorArray = ["red","blue","yellow","orange","green","pink","black","grey",]
 class HomePage extends Component {
 
@@ -15,11 +17,17 @@ class HomePage extends Component {
             canPress:true,
             endGame:false,
             matchedPair:0,
+            name:'',
+            showHighScore:false
         };
     }
     
     componentDidMount(){
-        this.setGame();
+        console.log(this.props.userRecord,this.props.test)
+    }
+
+    componentWillReceiveProps(newProps){
+        console.log(newProps.userRecord,newProps.test)
     }
 
     setGame(){
@@ -53,10 +61,14 @@ class HomePage extends Component {
             let card2 = this.state.gameArray[openArray[1]].pair
             if(card1 == card2){
                 let newGameArray = this.state.gameArray;
+                let newMatchedPair = this.state.matchedPair;
                 newGameArray[openArray[0]] = "";
                 newGameArray[openArray[1]] = "";
-                    this.setState({score:this.state.score+5,gameArray:newGameArray,canPress:true,openArray:[]})
-                
+                newMatchedPair += 1;
+                this.setState({score:this.state.score+5,gameArray:newGameArray,canPress:true,openArray:[],matchedPair:newMatchedPair})
+                if(newMatchedPair == 8){
+                    this.setState({endGame:true})
+                }
             }
             else{
                 let newGameArray = this.state.gameArray;
@@ -64,10 +76,20 @@ class HomePage extends Component {
                 newGameArray[openArray[1]].open = false;
                     this.setState({score:this.state.score-1,gameArray:newGameArray,canPress:true,openArray:[]})
             }
-
-            
         },1000)
+    }
 
+       saveRecord(){
+
+            let name  = this.state.name;
+            name = name.trim();
+            if(name == ''){
+                alert("Please input valid name");
+                return;
+            }
+            let record = {name:name,score:this.state.score};
+            this.props.saveRecord(record)
+            this.setState({showGame:false,endGame:false,score:0})
 
     }
 
@@ -82,7 +104,7 @@ class HomePage extends Component {
                     </View>
                     <Text>Score:{this.state.score}</Text>
 
-                    <TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={()=>{this.setState({showHighScore:true})}}>
                         <View>
                             <Text>High Scores</Text>
                         </View>
@@ -93,6 +115,7 @@ class HomePage extends Component {
                 <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
                 {!this.state.showGame?
                     <TouchableWithoutFeedback onPress={()=>{
+                        this.setGame();
                         this.setState({showGame:true})
                     }}>
                         <View style={{padding:20,backgroundColor:"#aaa"}}>
@@ -148,8 +171,44 @@ class HomePage extends Component {
                     />
                 </View>
                 }
-
                 </View>
+                {
+                    this.state.endGame?
+                    <View style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'#aaaaaa'}}>
+                        <TouchableWithoutFeedback onPress={()=>{
+                            this.setState({showGame:false,endGame:false,score:0})
+                        }}>
+                            <Text style={{fontSize:20,fontWeight:'bold',position:'absolute',top:20,right:20}}>X</Text>
+                        </TouchableWithoutFeedback>
+                        <View style={{alignItems:'center',justifyContent:'center',}}>
+                            <Text>End Game</Text>
+                            <Text>You got {this.state.score} points</Text>
+                            <Text>Please input your name to store record</Text>
+                            <TextInput
+                            style={{paddingLeft:10,width:200,height:25,borderWidth:1,backgroundColor:'white',marginVertical:10}}
+                            onChangeText={text => this.setState({name:text})}
+                            value={this.state.name}
+                            />
+                            <TouchableWithoutFeedback onPress={()=>{
+                                this.saveRecord();
+                            }}>
+                            <View style={{padding:10,marginVertical:10,backgroundColor:'white'}}>
+                                <Text style={{fontSize:20,fontWeight:'bold',}}>Submit</Text>
+                            </View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                    </View>
+                    :
+                    null
+                }
+                {
+                    this.state.showHighScore?
+                    <View style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',alignItems:'center',justifyContent:'center',backgroundColor:'#aaaaaa'}}>
+                        <ShowRecord closeView={()=>{this.setState({showHighScore:false})}}/>
+                    </View>
+                    :
+                    null
+                }
 			</View>
 		)
 	}
@@ -157,7 +216,8 @@ class HomePage extends Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-        userRecord: state.auth.userRecord,
+        userRecord: state.main.userRecord,
+        test: state.main.test,
 	}
 }
 

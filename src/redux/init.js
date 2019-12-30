@@ -10,9 +10,9 @@ import reduxReset from 'redux-reset';
 import { DEBUG } from 'Config';
 import Types from './types';
 
-const IGNORE_ACTION = [
-	...Object.keys(Types.loading),
-]
+// const IGNORE_ACTION = [
+// 	...Object.keys(Types.loading),
+// ]
 
 const Reducers = require('./reducer');
 import thunk from 'redux-thunk';
@@ -33,7 +33,7 @@ function setupPersist(store, secretKey){
 	let persistor = persistStore(store, {
 		storage: (Platform.OS == 'ios') ? AsyncStorage : FilesystemStorage,
 		transforms: [createEncryptor({secretKey})],		
-		whitelist: ['setting','auth'],
+		whitelist: ['setting','auth','main'],
 		// blacklist: ['loading','root'],
 	});
 
