@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View, StyleSheet, Animated, Text, Image, TouchableWithoutFeedback,FlatList,TextInput } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Animated, Text, Image, TouchableWithoutFeedback,FlatList,TextInput,Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import ShowRecord from './ShowRecord';
@@ -18,16 +18,27 @@ class HomePage extends Component {
             endGame:false,
             matchedPair:0,
             name:'',
-            showHighScore:false
+            showHighScore:false,
+            width:1,
+            height:1
         };
     }
     
     componentDidMount(){
+        this.setState({width:Dimensions.get('window').width,height:Dimensions.get('window').height});
         console.log(this.props.userRecord,this.props.test)
+        Dimensions.addEventListener('change',()=>{
+            console.log("testing",Dimensions.get('window').width)
+                this.setState({width:Dimensions.get('window').width,height:Dimensions.get('window').height});
+        });
     }
 
     componentWillReceiveProps(newProps){
         console.log(newProps.userRecord,newProps.test)
+    }
+
+    componentWillUnmount(){
+        Dimensions.removeEventListener('change')
     }
 
     setGame(){
@@ -94,18 +105,20 @@ class HomePage extends Component {
     }
 
 	render() {
-
+        let remainHeight = Dimensions.get('window').height - 90 - 100
 		return (
 			<View style={{flex:1}}>
                 {/*header*/}
-                <View style={{height:100,alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginHorizontal:20}}> 
-                    <View style={{backgroundColor:'#000'}}>
-                        <Image source={require('../../asset/images/appit-icon.png')} style={{height:50,width:50}} resizeMode={'contain'}/>
-                    </View>
-                    <Text>Score:{this.state.score}</Text>
 
+                <View style={{height:80,alignItems:'center',justifyContent:'space-between',flexDirection:'row',marginHorizontal:20}}> 
+                    <View style={{backgroundColor:'#000',}}>
+                        <Image source={require('../../asset/images/appit-icon.png')} style={{height:40,width:40}} resizeMode={'contain'}/>
+                    </View>
+                    <View>
+                        <Text>Score:{this.state.score}</Text>
+                    </View>
                     <TouchableWithoutFeedback onPress={()=>{this.setState({showHighScore:true})}}>
-                        <View>
+                        <View >
                             <Text>High Scores</Text>
                         </View>
                     </TouchableWithoutFeedback>
@@ -128,8 +141,12 @@ class HomePage extends Component {
                             data={this.state.gameArray}
                             renderItem={({ item,index }) => {
                                 if( item != '' || item != ""){
+                                    let disabledPress = !this.state.canPress;
+                                    if(this.state.openArray.includes(index)){
+                                        disabledPress = true
+                                    }
                                     return(
-                                        <TouchableWithoutFeedback disabled={!this.state.canPress} onPress={ ()=>{
+                                        <TouchableWithoutFeedback disabled={disabledPress} onPress={ ()=>{
                                             this.setState({canPress:false})
                                             let newGameArray = this.state.gameArray
                                             newGameArray[index].open = true;
@@ -145,7 +162,7 @@ class HomePage extends Component {
                                             }
                                         }
                                         }>
-                                            <View style={{margin:10,width:50,height:80,borderColor:"#000",borderWidth:1,alignItems:'center',justifyContent:'center',alignSelf:'center'}}>
+                                            <View style={{margin:10,width:80,height:remainHeight/4,borderColor:"#000",borderWidth:1,alignItems:'center',justifyContent:'center',alignSelf:'center'}}>
                                                 {item.open?
                                                     <View style={{width:'100%',height:'100%',backgroundColor:colorArray[item.pair]}}/>
                                                 :
@@ -157,7 +174,7 @@ class HomePage extends Component {
                                 }
                                 else{
                                     return(
-                                    <View style={{margin:10,width:50,height:80,alignSelf:'center'}}>
+                                    <View style={{margin:10,width:80,height:remainHeight/4,alignSelf:'center'}}>
              
                                     </View>
                                     )
